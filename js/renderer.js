@@ -152,7 +152,7 @@ CWS.Renderer.prototype.render = function (controls)
 		{
 			this['3DWorkpiece'].animation.next();
 		}*/
-		const obj3D = this.scene.getObjctByName("3DWorkpiece);
+		const obj3D = this.scene.getObjectByName("3DWorkpiece");
 		if (obj3D) this.scene.remove(obj3D);
 		
 		this.renderer.render( this.scene, this.camera );
