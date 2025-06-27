@@ -81,7 +81,7 @@ CWS.UI = function (controller)
 			}
 			controller.update2D();
 		});
-		$("#run3DIcon").css('color', 'green').click(function (ev) 
+		/*$("#run3DIcon").css('color', 'green').click(function (ev) 
 		{
 			controller.run3D=!controller.run3D;
 			if (controller.run3D===false)
@@ -91,7 +91,7 @@ CWS.UI = function (controller)
 				$(this).css('color','green');
 			}
 			controller.update3D();
-		});
+		});*/
 		var color = "green";
 		if (controller.renderer.displayWireframe===false)
 			color="red";
