@@ -92,7 +92,7 @@ CWS.UI = function (controller)
 			}
 			controller.update3D();
 		});*/
-		var color = "green";
+		/*var color = "green";
 		if (controller.renderer.displayWireframe===false)
 			color="red";
 		$("#wireframeIcon").css('color', color).click(function (ev) 
@@ -106,7 +106,7 @@ CWS.UI = function (controller)
 			{
 				$(this).css('color','green');
 			}
-		});
+		});*/
 		$("#runAnimationIcon").click(function (ev) 
 		{
 			controller.runAnimation();

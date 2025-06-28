@@ -37,9 +37,6 @@
 	
 	<script type="text/javascript">
 	var controller,ui;
-	// TODO
-	// Lathe tool
-	// Check input forms
 	window.addEventListener("load", (function () 
 	{
         controller = new CWS.Controller(
@@ -74,8 +71,7 @@
 </script>
 </head>
 <body>
-	<div id="editor">
-	</div>
+	<div id="editor"></div>
 	<div id="topMenu">
 		<nav>
 			<ul>
@@ -92,19 +88,8 @@
 				</li>
 				<li><div><span title="Editor" class="icon icon-pencil notImplemented"></span>Editor</div></li>
 				<li><div><span title="Simulator" class="icon icon-play3 notImplemented"></span>Simulator</div></li>
-				<li><div><span title="Machine" class="icon icon-cogs"></span>Machine</div>
-					<ul>
-						<li><div title="Open Machine">Open Machine</div></li>
-						<li><div title="Machine Settings" class="notImplemented">Machine Settings</div></li>
-						<li><div title="Tool">Tool</div></li>
-					</ul>
-				</li>
-				<li><div><span title="Workpiece" class="icon icon-codepen"></span>Workpiece</div>
-					<ul>
-						<li><div title="Workpiece dimensions">Dimensions</div></li>
-						<li><div title="Workpiece material" class="notImplemented">Material</div></li>
-					</ul>
-				</li>
+				<!-- Menu "Machine" removido -->
+				<!-- Menu "Workpiece" removido -->
 				<li><div><span title="Help" class="icon icon-question"></span>Help</div>
 					<ul>
 						<li><div title="Lisence" class="notImplemented">Lisence</div></li>
@@ -119,26 +104,25 @@
         <span id="machineIcon"></span>
 	</div>
 	<div id="canvasContainer">
-	<div id="messages"></div>
+		<div id="messages"></div>
 	</div>
 	<div id="bottomMenu">
 		<span title="Run" id="runIcon" class="icon-play3"></span>
 		<span title="Run Animation" id="runAnimationIcon" class="icon-film"></span>
-		<span title="Display wireframe" id="wireframeIcon" class="icon-codepen"></span>
 		<span title="Auto Run" id="autoRunIcon" class="icon-spinner9"></span>
 		<span title="Save" id="saveIcon" class="icon-floppy-disk"></span>
-		<span title="Simulate 2D" id="run2DIcon" >2D</span>
-		<!--<span title="Simulate 3D" id="run3DIcon" >3D</span>-->
+		<span title="Simulate 2D" id="run2DIcon">2D</span>
+		<!--<span title="Simulate 3D" id="run3DIcon">3D</span>-->
+		<!--<span title="Display wireframe" id="wireframeIcon" class="icon-codepen"></span>-->
 	</div>
 </body>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-      ga('create', 'UA-73803745-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
+  ga('create', 'UA-73803745-1', 'auto');
+  ga('send', 'pageview');
+</script>
 </html>
