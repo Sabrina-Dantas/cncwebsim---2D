@@ -1,3 +1,4 @@
+<!--
 <html>
 <head>
 	<meta charset="utf-8">
@@ -88,8 +89,7 @@
 				</li>
 				<li><div><span title="Editor" class="icon icon-pencil notImplemented"></span>Editor</div></li>
 				<li><div><span title="Simulator" class="icon icon-play3 notImplemented"></span>Simulator</div></li>
-				<!-- Menu "Machine" removido -->
-				<!-- Menu "Workpiece" removido -->
+			
 				<li><div><span title="Help" class="icon icon-question"></span>Help</div>
 					<ul>
 						<li><div title="Lisence" class="notImplemented">Lisence</div></li>
@@ -112,8 +112,215 @@
 		<span title="Auto Run" id="autoRunIcon" class="icon-spinner9"></span>
 		<span title="Save" id="saveIcon" class="icon-floppy-disk"></span>
 		<span title="Simulate 2D" id="run2DIcon">2D</span>
-		<!--<span title="Simulate 3D" id="run3DIcon">3D</span>-->
-		<!--<span title="Display wireframe" id="wireframeIcon" class="icon-codepen"></span>-->
+
+	</div>
+</body>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga'); 
+
+  ga('create', 'UA-73803745-1', 'auto');
+  ga('send', 'pageview');
+</script>
+</html>
+-->
+
+
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="google" content="nositelinkssearchbox" />
+    <meta name="description" content="CNC Web Simulator, an open source CNC simulator for web browser. It can simulate lathe, mill and 3D printers." />
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.structure.css">
+    <link rel="stylesheet" type="text/css" href="css/fontIcon.css">
+    <link rel="stylesheet" type="text/css" href="css/ui.css">
+    <title>CNC Web Simulator</title>
+    <script src="js/libs/lz-string.min.js"></script>
+    <script src="js/libs/ace/ace.js"></script>
+    <script src="js/libs/jquery-1.12.0.min.js"></script>
+    <script src="js/libs/jquery-ui.min.js"></script> 
+    <script src="js/libs/three.js"></script>
+    <script src="js/libs/dat.gui.js"></script>
+	<script src="js/libs/stats.min.js"></script>
+	<script src="js/libs/OrbitControls.js"></script>
+	<script src="js/libs/TrackballControls.js"></script>
+    <script src="js/libs/OBJExporter.js"></script>
+    <script src="js/libs/STLBinaryExporter.js"></script>
+    
+    <script src="js/cws.js"></script>
+	<script src="js/storage.js"></script>
+	<script src="js/project.js"></script>
+	<script src="js/editor.js"></script>
+	<script src="js/renderer.js"></script>
+	<script src="js/shaders.js"></script>
+	<script src="js/machine.js"></script>
+	<script src="js/lathe.js"></script>
+    <script src="js/mill.js"></script>
+    <script src="js/printer.js"></script>
+    <script src="js/motion.js"></script>
+	<script src="js/controller.js"></script>
+	<script src="js/ui.js"></script>
+	
+	<style>
+		/* Estilo janela de exercícios */
+		#exerciseWindow {
+			display: none;
+			position: absolute;
+			width: 400px;
+			height: 350px;
+			background: #fff;
+			border: 2px solid #333;
+			border-radius: 8px;
+			box-shadow: 0 0 15px rgba(0,0,0,0.3);
+			padding: 10px;
+			z-index: 9999;
+		}
+		#exerciseWindow h2 {
+			margin-top: 0;
+		}
+		.exercise-buttons {
+			display: flex;
+			gap: 10px;
+			margin-bottom: 10px;
+		}
+		.exercise-buttons button {
+			flex: 1;
+			padding: 5px;
+			cursor: pointer;
+		}
+		#exerciseImage, #answerImage {
+			max-width: 100%;
+			max-height: 150px;
+			display: block;
+			margin: 10px auto;
+		}
+		#closeExercise {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			cursor: pointer;
+			font-weight: bold;
+			background: red;
+			color: white;
+			border: none;
+			border-radius: 3px;
+			padding: 2px 6px;
+		}
+	</style>
+
+	<script type="text/javascript">
+	var controller, ui;
+	window.addEventListener("load", (function () {
+        controller = new CWS.Controller(
+        	new CWS.CodeEditor(),
+        	new CWS.Storage({useCompression:true,useLocalStorage:true}),
+        	new CWS.Renderer("renderer1"),
+        	new CWS.Motion(),
+        	true
+        );
+		
+		ui = new CWS.UI(controller);
+		var stats = ui.createStats(true);
+
+		function onWindowResize() {
+			controller.windowResize();
+			ui.resize();
+		}
+
+		function animate() {
+			requestAnimationFrame( animate );
+			stats.update();
+			controller.motion.run();
+			controller.render();
+		}
+		animate();
+
+		window.addEventListener( 'resize', onWindowResize, false );
+		controller.runInterpreter();
+
+		// ---------- Funções da janela de exercícios ----------
+		$("#exerciseWindow").draggable().resizable();
+
+		$("#openExercises").on("click", function(){
+			$("#exerciseWindow").fadeIn();
+		});
+		$("#closeExercise").on("click", function(){
+			$("#exerciseWindow").fadeOut();
+		});
+		$(".exerciseBtn").on("click", function(){
+			let exNum = $(this).data("ex");
+			$("#exerciseImage").attr("src", `images/exercise${exNum}.png.jpg`);
+			$("#answerImage").hide();
+		});
+		$("#viewAnswer").on("click", function(){
+			let currentSrc = $("#exerciseImage").attr("src");
+			if(currentSrc){
+				let exNum = currentSrc.match(/exercise(\d+)/)[1];
+				$("#answerImage").attr("src", `images/answer${exNum}.png.jpg`).show();
+			}
+		});
+	}),true);
+	</script>
+</head>
+<body>
+	<div id="editor"></div>
+	<div id="topMenu">
+		<nav>
+			<ul>
+				<li><div><span title="File" class="icon icon-folder-open"></span>File</div>
+					<ul>
+						<li><div title="New Project">New</div></li>
+						<li><div title="Open Project">Open</div></li>
+						<li><div title="Delete File" class="notImplemented">Delete</div></li>
+						<li><div title="Edit File" class="notImplemented">Edit</div></li>
+						<li><div title="Import File" class="notImplemented">Import</div></li>
+						<li><div title="Export File" class="notImplemented">Export</div></li>
+						<li><div title="Demo File" class="notImplemented">Demos</div></li>
+					</ul>
+				</li>
+				<li><div><span title="Editor" class="icon icon-pencil notImplemented"></span>Editor</div></li>
+				<li><div><span title="Simulator" class="icon icon-play3 notImplemented"></span>Simulator</div></li>
+				<li><div id="openExercises"><span title="Exercises" class="icon icon-book"></span>Exercises</div></li>
+				<li><div><span title="Help" class="icon icon-question"></span>Help</div>
+					<ul>
+						<li><div title="Lisence" class="notImplemented">Lisence</div></li>
+						<li><div title="About" class="notImplemented">About</div></li>
+						<li><div title="Documentation" class="notImplemented">Documentation</div></li>
+						<li><div title="Source code" ><a href="https://github.com/filipecaixeta/cncwebsim/">Source code</a></div></li>
+						<li><div title="Author" ><a href="http://filipecaixeta.com.br/">Author</a></div></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+        <span id="machineIcon"></span>
+	</div>
+	<div id="canvasContainer">
+		<div id="messages"></div>
+	</div>
+	<div id="bottomMenu">
+		<span title="Run" id="runIcon" class="icon-play3"></span>
+		<span title="Run Animation" id="runAnimationIcon" class="icon-film"></span>
+		<span title="Auto Run" id="autoRunIcon" class="icon-spinner9"></span>
+		<span title="Save" id="saveIcon" class="icon-floppy-disk"></span>
+		<span title="Simulate 2D" id="run2DIcon">2D</span>
+	</div>
+
+	<!-- Janela de exercícios -->
+	<div id="exerciseWindow">
+		<button id="closeExercise">X</button>
+		<h2>Exercises</h2>
+		<div class="exercise-buttons">
+			<button class="exerciseBtn" data-ex="1">Exercise 1</button>
+			<button class="exerciseBtn" data-ex="2">Exercise 2</button>
+			<button class="exerciseBtn" data-ex="3">Exercise 3</button>
+		</div>
+		<img id="exerciseImage" src="" alt="Exercise Image">
+		<button id="viewAnswer">View Answer</button>
+		<img id="answerImage" src="" alt="Answer Image" style="display:none;">
 	</div>
 </body>
 <script>
@@ -126,3 +333,4 @@
   ga('send', 'pageview');
 </script>
 </html>
+
