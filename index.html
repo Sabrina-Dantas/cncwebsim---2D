@@ -127,7 +127,6 @@
 </html>
 -->
 
-
 <html>
 <head>
 	<meta charset="utf-8">
@@ -139,6 +138,8 @@
     <link rel="stylesheet" type="text/css" href="css/fontIcon.css">
     <link rel="stylesheet" type="text/css" href="css/ui.css">
     <title>CNC Web Simulator</title>
+
+    <!-- libs -->
     <script src="js/libs/lz-string.min.js"></script>
     <script src="js/libs/ace/ace.js"></script>
     <script src="js/libs/jquery-1.12.0.min.js"></script>
@@ -151,6 +152,7 @@
     <script src="js/libs/OBJExporter.js"></script>
     <script src="js/libs/STLBinaryExporter.js"></script>
     
+    <!-- core -->
     <script src="js/cws.js"></script>
 	<script src="js/storage.js"></script>
 	<script src="js/project.js"></script>
@@ -164,52 +166,124 @@
     <script src="js/motion.js"></script>
 	<script src="js/controller.js"></script>
 	<script src="js/ui.js"></script>
-	
+
 	<style>
-		/* Estilo janela de exercícios */
-		#exerciseWindow {
-			display: none;
-			position: absolute;
-			width: 400px;
-			height: 350px;
-			background: #fff;
-			border: 2px solid #333;
-			border-radius: 8px;
-			box-shadow: 0 0 15px rgba(0,0,0,0.3);
-			padding: 10px;
-			z-index: 9999;
-		}
-		#exerciseWindow h2 {
-			margin-top: 0;
-		}
-		.exercise-buttons {
-			display: flex;
-			gap: 10px;
-			margin-bottom: 10px;
-		}
-		.exercise-buttons button {
-			flex: 1;
-			padding: 5px;
-			cursor: pointer;
-		}
-		#exerciseImage, #answerImage {
-			max-width: 100%;
-			max-height: 150px;
-			display: block;
-			margin: 10px auto;
-		}
-		#closeExercise {
-			position: absolute;
-			top: 5px;
-			right: 5px;
-			cursor: pointer;
-			font-weight: bold;
-			background: red;
-			color: white;
-			border: none;
-			border-radius: 3px;
-			padding: 2px 6px;
-		}
+	#exerciseWindow {
+		display: none;
+		position: absolute;
+		width: 650px;
+		height: 460px;
+		background: #1b1b1b;
+		color: #eee;
+		border: 1px solid #333;
+		border-radius: 8px;
+		box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+		padding: 8px;
+		z-index: 9999;
+		overflow: hidden;
+		font-family: inherit;
+	}
+	#exerciseWindow .cwsx-header {
+		height: 36px;
+		display:flex;
+		align-items:center;
+		justify-content:center;
+		background: linear-gradient(#171717,#232323);
+		border-bottom: 1px solid #2b2b2b;
+		font-weight:600;
+	}
+	#closeExercise {
+		position: absolute;
+		top: 8px;
+		right: 10px;
+		cursor: pointer;
+		background: #c62828;
+		color: white;
+		border: none;
+		border-radius: 4px;
+		padding: 4px 8px;
+		font-weight:700;
+	}
+	#exerciseContent {
+		display:flex;
+		gap:12px;
+		height: calc(100% - 46px);
+		padding: 10px;
+		box-sizing: border-box;
+	}
+	#exerciseList {
+		width: 28%;
+		background: #7a0000;
+		border-radius: 8px;
+		padding: 10px;
+		display:flex;
+		flex-direction:column;
+		gap:8px;
+		overflow:auto;
+		box-sizing: border-box;
+	}
+	#exerciseList .exerciseBtn {
+		background: transparent;
+		color: #fff;
+		border: none;
+		text-align:left;
+		padding: 8px 6px;
+		cursor: pointer;
+		border-radius: 6px;
+		font-weight:600;
+	}
+	#exerciseList .exerciseBtn:hover {
+		background: rgba(255,255,255,0.08);
+	}
+	#exerciseViewer {
+		flex:1;
+		display:flex;
+		flex-direction:column;
+		justify-content:flex-start;
+		align-items:center;
+		padding:6px;
+		box-sizing:border-box;
+		background: linear-gradient(#151515,#1a1a1a);
+		border-radius:8px;
+	}
+	#exerciseTitle {
+		margin: 6px 0 10px 0;
+		color: #f5f5f5;
+	}
+	#imageWrap {
+		flex:1;
+		width: 100%;
+		display:flex;
+		align-items:center;
+		justify-content:center;
+		padding:6px;
+		box-sizing:border-box;
+	}
+	#exerciseImage, #gcodeImage {
+		max-width: 100%;
+		max-height: 100%;
+		object-fit: contain;
+		border: 1px solid #333;
+		border-radius:6px;
+		display:none;
+		background: #000;
+	}
+	.viewer-buttons {
+		width:100%;
+		display:flex;
+		gap:10px;
+		justify-content:center;
+		padding:8px 0 0 0;
+	}
+	.viewer-buttons button {
+		padding:8px 14px;
+		border-radius:6px;
+		border: none;
+		cursor:pointer;
+		font-weight:700;
+	}
+	.btn-coder { background:#2b7a78; color:#fff; }
+	.btn-close { background:#c62828; color:#fff; }
 	</style>
 
 	<script type="text/javascript">
@@ -242,27 +316,69 @@
 		window.addEventListener( 'resize', onWindowResize, false );
 		controller.runInterpreter();
 
-		// ---------- Funções da janela de exercícios ----------
-		$("#exerciseWindow").draggable().resizable();
+		// janela de exercícios
+		$("#exerciseWindow").draggable({ handle: ".cwsx-header" }).resizable({
+			minWidth: 420,
+			minHeight: 300,
+			alsoResize: "#exerciseViewer, #imageWrap"
+		});
 
 		$("#openExercises").on("click", function(){
 			$("#exerciseWindow").fadeIn();
 		});
 		$("#closeExercise").on("click", function(){
+			closeExerciseWindow();
+		});
+		$("#exerciseWindow").on("click", "#closeViewer", function(){
+			closeExerciseWindow();
+		});
+
+		function closeExerciseWindow(){
 			$("#exerciseWindow").fadeOut();
+			$("#exerciseTitle").text("Select an exercise");
+			$("#exerciseImage").hide().attr("src","");
+			$("#gcodeImage").hide().attr("src","");
+		}
+
+		function setImageWithFallback($img, basePathNoExt){
+			var primary = basePathNoExt + ".png";
+			var fallback = basePathNoExt + ".png.jpg";
+			$img.off("error.fallback").one("error.fallback", function(){
+				$img.attr("src", fallback);
+			});
+			$img.attr("src", primary);
+		}
+
+		var currentEx = null;
+		var showingGcode = false;
+
+		$(document).on("click", ".exerciseBtn", function(){
+			currentEx = $(this).data("ex");
+			showingGcode = false;
+			$("#exerciseTitle").text("Exercise " + currentEx);
+			setImageWithFallback($("#exerciseImage"), "images/exercise" + currentEx);
+			$("#exerciseImage").show();
+			$("#gcodeImage").hide().attr("src","");
 		});
-		$(".exerciseBtn").on("click", function(){
-			let exNum = $(this).data("ex");
-			$("#exerciseImage").attr("src", `images/exercise${exNum}.png.jpg`);
-			$("#answerImage").hide();
-		});
-		$("#viewAnswer").on("click", function(){
-			let currentSrc = $("#exerciseImage").attr("src");
-			if(currentSrc){
-				let exNum = currentSrc.match(/exercise(\d+)/)[1];
-				$("#answerImage").attr("src", `images/answer${exNum}.png.jpg`).show();
+
+		// alternar para G-Code
+		$("#exerciseWindow").on("click", "#viewCoder", function(){
+			if(!currentEx) return;
+			if(showingGcode){
+				// volta para exercício
+				$("#exerciseTitle").text("Exercise " + currentEx);
+				$("#exerciseImage").show();
+				$("#gcodeImage").hide();
+				showingGcode = false;
+			} else {
+				$("#exerciseTitle").text("G-Code " + currentEx);
+				setImageWithFallback($("#gcodeImage"), "images/gcode" + currentEx);
+				$("#gcodeImage").show();
+				$("#exerciseImage").hide();
+				showingGcode = true;
 			}
 		});
+
 	}),true);
 	</script>
 </head>
@@ -271,73 +387,44 @@
 	<div id="topMenu">
 		<nav>
 			<ul>
-				<li><div><span title="File" class="icon icon-folder-open"></span>File</div>
-					<ul>
-						<li><div title="New Project">New</div></li>
-						<li><div title="Open Project">Open</div></li>
-						<li><div title="Delete File" class="notImplemented">Delete</div></li>
-						<li><div title="Edit File" class="notImplemented">Edit</div></li>
-						<li><div title="Import File" class="notImplemented">Import</div></li>
-						<li><div title="Export File" class="notImplemented">Export</div></li>
-						<li><div title="Demo File" class="notImplemented">Demos</div></li>
-					</ul>
-				</li>
+				<li><div><span title="File" class="icon icon-folder-open"></span>File</div></li>
 				<li><div><span title="Editor" class="icon icon-pencil notImplemented"></span>Editor</div></li>
 				<li><div><span title="Simulator" class="icon icon-play3 notImplemented"></span>Simulator</div></li>
-				<li><div><span title="Exercises" class="icon icon-cogs"></span>Exercise</div>
-					<ul>
-						<li><div title="Exercise 1">Exercise 1</div></li>
-						<li><div title="Exercise 2">Exercise 2</div></li>
-						<li><div title="Exercise 3">Exercise 3</div></li>
-					</ul>
-				<li><div><span title="Help" class="icon icon-question"></span>Help</div>
-					<ul>
-						<li><div title="Lisence" class="notImplemented">Lisence</div></li>
-						<li><div title="About" class="notImplemented">About</div></li>
-						<li><div title="Documentation" class="notImplemented">Documentation</div></li>
-						<li><div title="Source code" ><a href="https://github.com/filipecaixeta/cncwebsim/">Source code</a></div></li>
-						<li><div title="Author" ><a href="http://filipecaixeta.com.br/">Author</a></div></li>
-					</ul>
-				</li>
+				<li><div id="openExercises"><span title="Exercises" class="icon icon-cogs"></span>Exercise</div></li>
 			</ul>
 		</nav>
         <span id="machineIcon"></span>
 	</div>
+
 	<div id="canvasContainer">
 		<div id="messages"></div>
 	</div>
-	<div id="bottomMenu">
-		<span title="Run" id="runIcon" class="icon-play3"></span>
-		<span title="Run Animation" id="runAnimationIcon" class="icon-film"></span>
-		<span title="Auto Run" id="autoRunIcon" class="icon-spinner9"></span>
-		<span title="Save" id="saveIcon" class="icon-floppy-disk"></span>
-		<span title="Simulate 2D" id="run2DIcon">2D</span>
-	</div>
 
-	
-
+	<!-- janela -->
 	<div id="exerciseWindow">
-		<button id="closeExercise">X</button>
-		<h2>Exercises</h2>
-		<div class="exercise-buttons">
-			<button class="exerciseBtn" data-ex="1">Exercise 1</button>
-			<button class="exerciseBtn" data-ex="2">Exercise 2</button>
-			<button class="exerciseBtn" data-ex="3">Exercise 3</button>
+		<div class="cwsx-header"><div class="cwsx-title">Exercises</div></div>
+		<button id="closeExercise" title="Close">Closer</button>
+
+		<div id="exerciseContent">
+			<div id="exerciseList">
+				<button class="exerciseBtn" data-ex="1">Exercise 1</button>
+				<button class="exerciseBtn" data-ex="2">Exercise 2</button>
+				<button class="exerciseBtn" data-ex="3">Exercise 3</button>
+				<button class="exerciseBtn" data-ex="4">Exercise 4</button>
+			</div>
+
+			<div id="exerciseViewer">
+				<h3 id="exerciseTitle">Select an exercise</h3>
+				<div id="imageWrap">
+					<img id="exerciseImage" src="" alt="Exercise Image">
+					<img id="gcodeImage" src="" alt="G-Code Image">
+				</div>
+				<div class="viewer-buttons">
+					<button id="viewCoder" class="btn-coder">Code</button>
+					<button id="closeViewer" class="btn-close">Close</button>
+				</div>
+			</div>
 		</div>
-		<img id="exerciseImage" src="" alt="Exercise Image">
-		<button id="viewAnswer">View Answer</button>
-		<img id="answerImage" src="" alt="Answer Image" style="display:none;">
 	</div>
 </body>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-73803745-1', 'auto');
-  ga('send', 'pageview');
-</script>
 </html>
-
-
