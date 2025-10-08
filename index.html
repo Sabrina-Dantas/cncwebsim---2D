@@ -126,7 +126,6 @@
 </script>
 </html>
 -->
-
 <html>
 <head>
 	<meta charset="utf-8">
@@ -173,11 +172,11 @@
 		position: absolute;
 		width: 650px;
 		height: 460px;
-		background: #1b1b1b;
+		background: #272822;
 		color: #eee;
 		border: 1px solid #333;
 		border-radius: 8px;
-		box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+		box-shadow: 0 10px 30px #272822;
 		padding: 8px;
 		z-index: 9999;
 		overflow: hidden;
@@ -197,7 +196,7 @@
 		top: 8px;
 		right: 10px;
 		cursor: pointer;
-		background: #c62828;
+		background: #d14826;
 		color: white;
 		border: none;
 		border-radius: 4px;
@@ -213,7 +212,7 @@
 	}
 	#exerciseList {
 		width: 28%;
-		background: #7a0000;
+		background: #d14826;
 		border-radius: 8px;
 		padding: 10px;
 		display:flex;
@@ -243,7 +242,7 @@
 		align-items:center;
 		padding:6px;
 		box-sizing:border-box;
-		background: linear-gradient(#151515,#1a1a1a);
+		background: linear-gradient(#272822,#272822);
 		border-radius:8px;
 	}
 	#exerciseTitle {
@@ -259,14 +258,14 @@
 		padding:6px;
 		box-sizing:border-box;
 	}
-	#exerciseImage, #gcodeImage {
+	#exerciseImage, #answerImage {
 		max-width: 100%;
 		max-height: 100%;
 		object-fit: contain;
-		border: 1px solid #333;
+		border: 1px solid #d14826;
 		border-radius:6px;
 		display:none;
-		background: #000;
+		background: #272822;
 	}
 	.viewer-buttons {
 		width:100%;
@@ -282,8 +281,8 @@
 		cursor:pointer;
 		font-weight:700;
 	}
-	.btn-coder { background:#2b7a78; color:#fff; }
-	.btn-close { background:#c62828; color:#fff; }
+	.btn-coder { background:#d14826; color:#fff; }
+	.btn-close { background:#d14826; color:#fff; }
 	</style>
 
 	<script type="text/javascript">
@@ -337,45 +336,40 @@
 			$("#exerciseWindow").fadeOut();
 			$("#exerciseTitle").text("Select an exercise");
 			$("#exerciseImage").hide().attr("src","");
-			$("#gcodeImage").hide().attr("src","");
+			$("#answerImage").hide().attr("src","");
 		}
 
-		function setImageWithFallback($img, basePathNoExt){
-			var primary = basePathNoExt + ".png";
-			var fallback = basePathNoExt + ".png.jpg";
-			$img.off("error.fallback").one("error.fallback", function(){
-				$img.attr("src", fallback);
-			});
-			$img.attr("src", primary);
+		function setImage($img, path){
+			$img.off("error").attr("src", path);
 		}
 
 		var currentEx = null;
-		var showingGcode = false;
+		var showingAnswer = false;
 
+		// quando clicar no exercício
 		$(document).on("click", ".exerciseBtn", function(){
 			currentEx = $(this).data("ex");
-			showingGcode = false;
+			showingAnswer = false;
 			$("#exerciseTitle").text("Exercise " + currentEx);
-			setImageWithFallback($("#exerciseImage"), "images/exercise" + currentEx);
+			setImage($("#exerciseImage"), "images/Ativ" + currentEx + ".jpg");
 			$("#exerciseImage").show();
-			$("#gcodeImage").hide().attr("src","");
+			$("#answerImage").hide();
 		});
 
-		// alternar para G-Code
+		// alternar entre exercício e resposta
 		$("#exerciseWindow").on("click", "#viewCoder", function(){
 			if(!currentEx) return;
-			if(showingGcode){
-				// volta para exercício
+			if(showingAnswer){
 				$("#exerciseTitle").text("Exercise " + currentEx);
 				$("#exerciseImage").show();
-				$("#gcodeImage").hide();
-				showingGcode = false;
+				$("#answerImage").hide();
+				showingAnswer = false;
 			} else {
-				$("#exerciseTitle").text("G-Code " + currentEx);
-				setImageWithFallback($("#gcodeImage"), "images/gcode" + currentEx);
-				$("#gcodeImage").show();
+				$("#exerciseTitle").text("Answer " + currentEx);
+				setImage($("#answerImage"), "images/Resp" + currentEx + ".jpg");
+				$("#answerImage").show();
 				$("#exerciseImage").hide();
-				showingGcode = true;
+				showingAnswer = true;
 			}
 		});
 
@@ -403,21 +397,26 @@
 	<!-- janela -->
 	<div id="exerciseWindow">
 		<div class="cwsx-header"><div class="cwsx-title">Exercises</div></div>
-		<button id="closeExercise" title="Close">Closer</button>
 
 		<div id="exerciseContent">
 			<div id="exerciseList">
-				<button class="exerciseBtn" data-ex="1">Exercise 1</button>
-				<button class="exerciseBtn" data-ex="2">Exercise 2</button>
-				<button class="exerciseBtn" data-ex="3">Exercise 3</button>
-				<button class="exerciseBtn" data-ex="4">Exercise 4</button>
+				<button class="exerciseBtn" data-ex="1">Exercise 1 (✮☆☆☆)</button>
+				<button class="exerciseBtn" data-ex="2">Exercise 2 (✮☆☆☆)</button>
+				<button class="exerciseBtn" data-ex="3">Exercise 3 (✮✮☆☆)</button>
+				<button class="exerciseBtn" data-ex="4">Exercise 4 (✮✮☆☆)</button>
+				<button class="exerciseBtn" data-ex="5">Exercise 5 (✮✮✮☆)</button>
+				<button class="exerciseBtn" data-ex="6">Exercise 6 (✮✮✮☆)</button>
+				<button class="exerciseBtn" data-ex="7">Exercise 7 (✮✮✮☆)</button>
+				<button class="exerciseBtn" data-ex="8">Exercise 8 (✮✮✮☆)</button>
+				<button class="exerciseBtn" data-ex="9">Exercise 9 (✮✮✮✮)</button>
+				<button class="exerciseBtn" data-ex="10">Exercise 10 (✮✮✮✮)</button>
 			</div>
 
 			<div id="exerciseViewer">
 				<h3 id="exerciseTitle">Select an exercise</h3>
 				<div id="imageWrap">
 					<img id="exerciseImage" src="" alt="Exercise Image">
-					<img id="gcodeImage" src="" alt="G-Code Image">
+					<img id="answerImage" src="" alt="Answer Image">
 				</div>
 				<div class="viewer-buttons">
 					<button id="viewCoder" class="btn-coder">Code</button>
