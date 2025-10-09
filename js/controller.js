@@ -1140,7 +1140,7 @@ CWS.Controller.prototype.runInterpreter = function(forceRun)
         var code = this.editor.getCode();
         this.motion.setData({ header:this.storage.header,
                                 code:code});
-        this.displayMessage("Running G Code");
+        //this.displayMessage("Running G Code");
         this.motion.run();
     };
 

@@ -317,8 +317,8 @@
 
 		// janela de exercícios
 		$("#exerciseWindow").draggable({ handle: ".cwsx-header" }).resizable({
-			minWidth: 420,
-			minHeight: 300,
+			minWidth: 320,
+			minHeight: 200,
 			alsoResize: "#exerciseViewer, #imageWrap"
 		});
 
@@ -425,5 +425,114 @@
 			</div>
 		</div>
 	</div>
+<!-- ===== Verificação Instantânea de Código G — Versão Interface Segura ===== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(() => {
+    // Tenta localizar o editor (mantendo compatibilidade)
+    let aceEditor = null;
+    if (window.controller?.editor?.editor) aceEditor = window.controller.editor.editor;
+    else if (window.controller?.editor) aceEditor = window.controller.editor;
+    else if (window.editor) aceEditor = window.editor;
+    else if (window.ace?.edit) aceEditor = ace.edit(document.querySelector(".ace_editor"));
+
+    if (!aceEditor) {
+      console.warn("❌ Nenhum editor ACE encontrado. Verificação não ativada.");
+      return;
+    }
+
+    // Cria o painel de feedback dentro do canvasContainer (em baixo do desenho)
+    const canvasContainer = document.getElementById("canvasContainer");
+    const feedbackDiv = document.createElement("div");
+    feedbackDiv.id = "gcode-feedback";
+    feedbackDiv.style.position = "absolute";
+    feedbackDiv.style.bottom = "8px";
+    feedbackDiv.style.left = "50%";
+    feedbackDiv.style.transform = "translateX(-50%)";
+    feedbackDiv.style.background = "rgba(255,255,255,0.9)";
+    feedbackDiv.style.border = "1px solid #d14826";
+    feedbackDiv.style.borderRadius = "6px";
+    feedbackDiv.style.padding = "6px 10px";
+    feedbackDiv.style.fontFamily = "monospace";
+    feedbackDiv.style.color = "#d14826";
+    feedbackDiv.style.fontSize = "13px";
+    feedbackDiv.style.whiteSpace = "pre-line";
+    feedbackDiv.style.display = "none";
+    feedbackDiv.style.zIndex = "99999";
+
+    canvasContainer.appendChild(feedbackDiv);
+
+    // Função de validação
+    function validarGCode(code) {
+  const linhas = code.split("\n");
+  const avisos = [];
+
+  // Comandos permitidos e letras válidas
+  const letrasValidas = ["G", "X", "Y", "Z", "R", "M"];
+
+  for (let i = 0; i < linhas.length; i++) {
+    const linhaOriginal = linhas[i];
+    const linha = linhaOriginal.trim();
+
+    if (!linha) continue;
+
+    // Extrai as partes: G1 X10 Y20, G1X50, etc.
+    const partes = linha.match(/[A-Za-z][0-9\.\-]*/g) || [];
+
+    // Se não tiver G no início → inválido
+    if (!/^G\d+/i.test(linha)) {
+      avisos.push(`⚠️ Linha ${i + 1}: comando inválido → "${linhaOriginal}"`);
+      continue;
+    }
+
+    // Verifica cada parte da linha
+    for (const parte of partes) {
+      const letra = parte[0].toUpperCase();
+
+      // Se tiver letra não permitida → erro
+      if (!letrasValidas.includes(letra)) {
+        avisos.push(`⚠️ Linha ${i + 1}: parâmetro inválido "${letra}"`);
+        break;
+      }
+
+      // Se a letra tiver que ter número e não tiver, erro
+      if (["X", "Y", "Z", "R"].includes(letra)) {
+        const numero = parte.slice(1);
+        if (numero === "" || isNaN(Number(numero))) {
+          avisos.push(`⚠️ Linha ${i + 1}: valor ausente ou inválido em "${parte}"`);
+          break;
+        }
+      }
+    }
+  }
+
+  return avisos;
+}
+
+
+    // Atualiza o painel
+    function atualizarFeedback() {
+      const codigo = aceEditor.getValue ? aceEditor.getValue() : "";
+      const avisos = validarGCode(codigo);
+
+      if (avisos.length > 0) {
+        feedbackDiv.innerHTML = avisos.join("<br>");
+        feedbackDiv.style.display = "block";
+      } else {
+        feedbackDiv.style.display = "none";
+        feedbackDiv.innerHTML = "";
+      }
+    }
+
+    // Observa mudanças no código
+    if (aceEditor.session?.on) aceEditor.session.on("change", atualizarFeedback);
+    else if (aceEditor.on) aceEditor.on("change", atualizarFeedback);
+
+    console.log("✅ Verificação instantânea ativada (versão visual segura)");
+  }, 2000);
+});
+</script>
+<!-- ===== Fim da Verificação Instantânea ===== -->
+
 </body>
 </html>

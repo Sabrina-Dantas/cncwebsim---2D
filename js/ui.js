@@ -744,7 +744,7 @@ CWS.DialogBox.prototype.openMachine = function(controller) {
     // HTML inicial: imagem do enunciado
     var html = `
         <div style="text-align:center;">
-            <img id="exercise1" src="images/exercise1.png.jpg" alt="Exercise 1" style="width:100%; max-width:350px; height:auto; margin-bottom:10px;">
+            <img id="exercise1" src="images/exercise1.png.jpg" alt="Exercise 1" style="width:100%; max-width:355px; height:auto; margin-bottom:10px;">
         </div>
     `;
 
@@ -970,7 +970,7 @@ CWS.DialogBox.prototype.workpieceDimensions = function (controller)
 CWS.DialogBox.prototype.tool = function(controller) {
     var html = `
         <div style="text-align:center;">
-            <img id="exercise3" src="images/exercise3.png.jpg" alt="Tool" style="width:100%; max-width:350px; height:auto; margin-bottom:10px;">
+            <img id="exercise3" src="images/exercise3.png.jpg" alt="Tool" style="width:100%; max-width:355px; height:auto; margin-bottom:10px;">
         </div>
     `;
 
